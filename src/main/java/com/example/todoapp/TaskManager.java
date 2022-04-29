@@ -4,6 +4,7 @@ import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -14,9 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TaskManager {
 
-    ArrayList<Task> tasks;
-    ObjectMapper objectMapper;
-    File file;
+    private List<Task> tasks;
+    private ObjectMapper objectMapper;
+    private File file;
+
     public TaskManager(){
         file = new File("target\\tasks.json");
         tasks = new ArrayList<>();
@@ -27,7 +29,7 @@ public class TaskManager {
         tasks.add(new Task(description));
     }
 
-    public ArrayList<Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
@@ -37,5 +39,15 @@ public class TaskManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void loadFromJson(){
+        try {
+            tasks = objectMapper.readValue(file, new TypeReference<ArrayList<Task>>() {
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

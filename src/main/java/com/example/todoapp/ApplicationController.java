@@ -9,24 +9,34 @@ import javafx.scene.control.TextField;
 
 public class ApplicationController {
     @FXML
-    Button addTaskButton;
+    Button addTaskButton = new Button();
     @FXML
-    ListView tasksListView;
+    ListView tasksListView = new ListView();
     @FXML
-    TextField descriptionTextField;
+    TextField descriptionTextField = new TextField();
+    @FXML
+    Button loadButton = new Button();
 
     TaskManager taskManager;
+
     public ApplicationController() {
         taskManager = new TaskManager();
+        loadTasksOnStartup();
     }
 
     @FXML
     public void addTask(){
-        taskManager.createTask(descriptionTextField.getText());
-        descriptionTextField.clear();
-        addToTasksListView(taskManager.getTasks().get(taskManager.getTasks().size()-1));
-        taskManager.saveToJson();
+        if(!loadButton.isDisabled()){
+            loadTasksOnStartup();
+        }
+        if(descriptionTextField.getText()!=""){
+            taskManager.createTask(descriptionTextField.getText());
+            descriptionTextField.clear();
+            addToTasksListView(taskManager.getTasks().get(taskManager.getTasks().size()-1));
+            taskManager.saveToJson();
+        }
     }
+
 
     @FXML
     public void addToTasksListView(Task task){
@@ -41,6 +51,14 @@ public class ApplicationController {
                 taskManager.getTasks().remove(index);
                 taskManager.saveToJson();
             }
+    }
 
+    public void loadTasksOnStartup(){
+        taskManager.loadFromJson();
+        for(Task task: taskManager.getTasks()){
+            addToTasksListView(task);
+        }
+        loadButton.setDisable(true);
+        loadButton.setVisible(false);
     }
 }
